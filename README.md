@@ -12,6 +12,10 @@
   </p>
 </div>
 
+<p align="center">
+  <img src="docs/videos/jobradar-demo.gif" alt="JobRadar demo" width="900" />
+</p>
+
 ---
 
 ## What is it
