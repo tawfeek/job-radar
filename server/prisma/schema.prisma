@@ -12,7 +12,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // URL is configured in prisma.config.ts (Prisma 7 moved it out of the
+  // schema). Runtime uses the @prisma/adapter-pg driver adapter.
 }
 
 model JobSearchProfile {
