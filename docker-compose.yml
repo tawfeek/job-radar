@@ -1,0 +1,56 @@
+# JobRadar — one-command local stack.
+#
+# Usage:
+#   docker compose up         (foreground)
+#   docker compose up -d      (background)
+#   docker compose down       (stop)
+#   docker compose down -v    (stop + wipe DB volume)
+#
+# This brings up Postgres 16 + the JobRadar app in two containers. Set
+# ANTHROPIC_API_KEY, ADMIN_PASSWORD, and JWT_SECRET in your .env first.
+# After bring-up the app runs migrations on boot via `prisma migrate
+# deploy`, so first-run is also one-command.
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: jobradar-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jobradar
+      POSTGRES_PASSWORD: jobradar
+      POSTGRES_DB: jobradar
+    ports:
+      # Mapped to 5434 on the host because 5432/5433 are commonly taken
+      # by other local services. The app reaches Postgres over the
+      # internal "postgres" hostname, not via this published port.
+      - "5434:5432"
+    volumes:
+      - jobradar_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "jobradar"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    container_name: jobradar-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://jobradar:jobradar@postgres:5432/jobradar
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CRON_SCHEDULE: ${CRON_SCHEDULE:-0 9 * * *}
+      CRON_ENABLED: ${CRON_ENABLED:-true}
+      NODE_ENV: production
+      PORT: 5173
+    ports:
+      - "5173:5173"
+
+volumes:
+  jobradar_pgdata:

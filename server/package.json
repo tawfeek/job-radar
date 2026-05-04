@@ -4,6 +4,7 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "NODE_OPTIONS=--experimental-strip-types nodemon --experimental-strip-types src/index.js",
     "start": "NODE_OPTIONS=--experimental-strip-types node --experimental-strip-types src/index.js",
     "db:migrate": "prisma migrate dev",
