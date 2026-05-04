@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <!-- Radar sweep arcs -->
+  <circle cx="32" cy="32" r="26" stroke="url(#g)" stroke-width="2" stroke-opacity="0.25" fill="none"/>
+  <circle cx="32" cy="32" r="18" stroke="url(#g)" stroke-width="2" stroke-opacity="0.45" fill="none"/>
+  <circle cx="32" cy="32" r="10" stroke="url(#g)" stroke-width="2" stroke-opacity="0.65" fill="none"/>
+  <!-- Sweep wedge -->
+  <path d="M32 32 L58 22 A26 26 0 0 0 32 6 Z" fill="url(#g)" fill-opacity="0.55"/>
+  <!-- Bright dot — a "blip" the radar found -->
+  <circle cx="46" cy="20" r="3" fill="#a5b4fc"/>
+  <!-- Center pivot -->
+  <circle cx="32" cy="32" r="2.5" fill="url(#g)"/>
+</svg>
