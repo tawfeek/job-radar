@@ -34,7 +34,7 @@ export default function Login() {
           <span className="font-bold text-xl text-surface-900">JobRadar</span>
         </div>
         <p className="text-sm text-surface-500 mb-6">
-          Enter the password from your <code className="text-xs bg-surface-100 px-1 rounded">.env</code> to continue.
+          Sign in to continue.
         </p>
         <input
           type="password"
