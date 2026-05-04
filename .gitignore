@@ -1,0 +1,14 @@
+node_modules/
+.env
+.DS_Store
+
+# Build output
+client/dist/
+server/dist/
+
+# Prisma generated
+server/src/generated/
+
+# Logs
+*.log
+npm-debug.log*

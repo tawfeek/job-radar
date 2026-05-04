@@ -1,0 +1,77 @@
+// JobRadar database schema. Three tables:
+//   - JobSearchProfile  — one per saved search ("QA Tel Aviv", "Backend Remote", etc.)
+//   - JobRun            — one row per agent execution; full success/failure history
+//   - JobPosting        — UPSERTed on (profileId, sourceUrl) so daily re-runs of the
+//                         same posting refresh agent metadata while preserving the
+//                         user's annotations (status, notes, applied date).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model JobSearchProfile {
+  id          String       @id @default(uuid())
+  name        String       @db.VarChar(100)
+  keywords    String[]
+  excludeKw   String[]     @map("exclude_kw")
+  location    String       @default("Israel") @db.VarChar(100)
+  remoteOk    Boolean      @default(true) @map("remote_ok")
+  minYearsExp Int?         @map("min_years_exp")
+  maxResults  Int          @default(10) @map("max_results")
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
+  runs        JobRun[]
+  postings    JobPosting[]
+
+  @@map("job_search_profiles")
+}
+
+model JobRun {
+  id            String           @id @default(uuid())
+  profileId     String           @map("profile_id")
+  status        String           @db.VarChar(20)
+  model         String?          @db.VarChar(100)
+  startedAt     DateTime         @default(now()) @map("started_at")
+  finishedAt    DateTime?        @map("finished_at")
+  postingsFound Int              @default(0) @map("postings_found")
+  postingsNew   Int              @default(0) @map("postings_new")
+  errorMessage  String?          @map("error_message")
+  profile       JobSearchProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, status, finishedAt])
+  @@map("job_runs")
+}
+
+model JobPosting {
+  id           String           @id @default(uuid())
+  profileId    String           @map("profile_id")
+  lastRunId    String?          @map("last_run_id")
+  title        String           @db.VarChar(300)
+  company      String           @db.VarChar(200)
+  location     String           @db.VarChar(200)
+  description  String
+  requirements String[]
+  sourceUrl    String           @map("source_url") @db.VarChar(500)
+  sourceName   String           @map("source_name") @db.VarChar(200)
+  postedAt     DateTime?        @map("posted_at")
+  freshness    String           @db.VarChar(20)
+  matchScore   Float?           @map("match_score")
+  matchReason  String?          @map("match_reason")
+  userStatus   String           @default("new") @map("user_status") @db.VarChar(20)
+  userNotes    String?          @map("user_notes")
+  appliedAt    DateTime?        @map("applied_at")
+  firstSeenAt  DateTime         @default(now()) @map("first_seen_at")
+  lastSeenAt   DateTime         @default(now()) @map("last_seen_at")
+  profile      JobSearchProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, sourceUrl])
+  @@index([profileId, userStatus, firstSeenAt])
+  @@map("job_postings")
+}

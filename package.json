@@ -1,0 +1,23 @@
+{
+  "name": "job-radar",
+  "version": "0.1.0",
+  "description": "AI-powered personal job search agent. Tracks new postings daily, scored by relevance to your profile, organized in a Kanban board.",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd server && npm install && npx prisma generate && cd ../client && npm install && npm run build",
+    "start": "cd server && npx prisma migrate deploy && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "license": "MIT",
+  "author": "Tawfeek Masalha",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tawfeek/job-radar.git"
+  }
+}
